@@ -96,7 +96,7 @@ def find_trending_kids_videos(max_results: int = 25) -> list[dict]:
 
 def analyze_trends_with_gemini(trending_videos: list[dict]) -> dict:
     """Use Gemini to analyze trends and suggest content ideas."""
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     video_summaries = []
     for v in trending_videos[:15]:

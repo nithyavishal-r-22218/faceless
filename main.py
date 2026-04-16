@@ -170,8 +170,13 @@ def cmd_video(day: int):
 
     console.print(f"\n[bold green]🎬 Creating video for Day {day}: {script.get('title', '')}[/]")
 
-    video_path = create_video(script, day)
-    thumb_path = create_thumbnail(script, day)
+    video_format = script.get("video_format", "long")
+    video_path = create_video(script, day, video_format=video_format)
+    if video_format == "short":
+        from agent.video_generator import create_thumbnail_for_format
+        thumb_path = create_thumbnail_for_format(script, day, video_format=video_format)
+    else:
+        thumb_path = create_thumbnail(script, day)
 
     console.print(f"[green]✅ Video: {video_path}[/]")
     console.print(f"[green]✅ Thumbnail: {thumb_path}[/]")

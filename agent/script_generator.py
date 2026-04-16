@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import random
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -24,7 +25,22 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 
 def get_model():
-    return genai.GenerativeModel("gemini-pro")
+    return genai.GenerativeModel("gemini-2.5-flash")
+
+
+def generate_with_retry(model, prompt, max_retries=3):
+    """Generate content with retry logic for rate limits."""
+    for attempt in range(max_retries):
+        try:
+            return model.generate_content(prompt)
+        except Exception as e:
+            error_str = str(e)
+            if "429" in error_str and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 15
+                print(f"Rate limited, retrying in {wait_time}s (attempt {attempt + 1}/{max_retries})")
+                time.sleep(wait_time)
+            else:
+                raise
 
 
 SCRIPT_SYSTEM_PROMPT = """You are a professional kids' cartoon YouTube scriptwriter with 30+ years of experience.
@@ -90,7 +106,7 @@ Create a complete video script for:
 Make it fun, educational, and engaging! Use bright colors and lovable characters.
 Return ONLY valid JSON, no markdown formatting."""
 
-    response = model.generate_content(prompt)
+    response = generate_with_retry(model, prompt)
     text = response.text.strip()
 
     # Clean potential markdown wrapping
@@ -132,7 +148,7 @@ Start date: {datetime.now().strftime('%Y-%m-%d')}
 Mix categories well. Include 2-3 trending/seasonal ideas. Ensure variety.
 Return ONLY valid JSON array, no markdown."""
 
-    response = model.generate_content(plan_prompt)
+    response = generate_with_retry(model, plan_prompt)
     text = response.text.strip()
 
     if text.startswith("```"):

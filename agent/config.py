@@ -12,21 +12,34 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "")
 YOUTUBE_CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID", "")
 YOUTUBE_CLIENT_ID = os.getenv("YOUTUBE_CLIENT_ID", "")
 YOUTUBE_CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET", "")
+REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN", "")
 
 # Content
 CHANNEL_NICHE = os.getenv("CHANNEL_NICHE", "kids_cartoon")
 TARGET_AUDIENCE = os.getenv("TARGET_AUDIENCE", "children")
 DEFAULT_LANGUAGE = os.getenv("DEFAULT_LANGUAGE", "en")
 
-# Video (long format 16:9)
+# Video format presets
 VIDEO_WIDTH = int(os.getenv("VIDEO_WIDTH", 1920))
 VIDEO_HEIGHT = int(os.getenv("VIDEO_HEIGHT", 1080))
-# Video (short format 9:16 for Reels/Shorts/TikTok)
-SHORT_WIDTH = 1080
-SHORT_HEIGHT = 1920
+SHORT_WIDTH = int(os.getenv("SHORT_WIDTH", 1080))
+SHORT_HEIGHT = int(os.getenv("SHORT_HEIGHT", 1920))
 VIDEO_FPS = int(os.getenv("VIDEO_FPS", 24))
 VIDEO_DURATION_MIN = int(os.getenv("VIDEO_DURATION_MIN", 30))
 VIDEO_DURATION_MAX = int(os.getenv("VIDEO_DURATION_MAX", 600))
+
+VIDEO_FORMATS = {
+    "long": {
+        "width": VIDEO_WIDTH,
+        "height": VIDEO_HEIGHT,
+        "aspect_ratio": "16:9",
+    },
+    "short": {
+        "width": SHORT_WIDTH,
+        "height": SHORT_HEIGHT,
+        "aspect_ratio": "9:16",
+    },
+}
 
 # TTS
 TTS_VOICE = os.getenv("TTS_VOICE", "en-US-AnaNeural")
@@ -111,3 +124,18 @@ VIDEO_TEMPLATES = {
         "narration_speed": 0.88,
     },
 }
+
+# Video generation provider
+VIDEO_GENERATION_PROVIDER = os.getenv("VIDEO_GENERATION_PROVIDER", "veo")
+REPLICATE_VIDEO_MODEL = os.getenv("REPLICATE_VIDEO_MODEL", "prunaai/p-video")
+REPLICATE_VIDEO_RESOLUTION = os.getenv("REPLICATE_VIDEO_RESOLUTION", "720p")
+REPLICATE_VIDEO_FPS = int(os.getenv("REPLICATE_VIDEO_FPS", "24"))
+REPLICATE_VIDEO_DRAFT = os.getenv("REPLICATE_VIDEO_DRAFT", "false").lower() in {"1", "true", "yes", "on"}
+REPLICATE_POLL_INTERVAL = float(os.getenv("REPLICATE_POLL_INTERVAL", "5"))
+REPLICATE_TIMEOUT_SECONDS = int(os.getenv("REPLICATE_TIMEOUT_SECONDS", "420"))
+
+# Google Veo video generation
+VEO_MODEL = os.getenv("VEO_MODEL", "veo-3.1-generate-preview")
+VEO_PERSON_GENERATION = os.getenv("VEO_PERSON_GENERATION", "allow_all")
+VEO_POLL_INTERVAL = float(os.getenv("VEO_POLL_INTERVAL", "10"))
+VEO_TIMEOUT_SECONDS = int(os.getenv("VEO_TIMEOUT_SECONDS", "600"))

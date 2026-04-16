@@ -20,7 +20,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from agent.auth import create_access_token, decode_access_token, hash_password, verify_password
-from agent.config import BASE_DIR, OUTPUT_DIR, VIDEOS_DIR, THUMBNAILS_DIR, SCRIPTS_DIR
+from agent.config import BASE_DIR, OUTPUT_DIR, VIDEOS_DIR, THUMBNAILS_DIR, SCRIPTS_DIR, AUDIO_DIR
 from agent.database import SessionLocal, init_db, User, Series, Video, Platform, ScheduleJob
 from agent.styles import ART_STYLES, NICHES, MUSIC_STYLES, TTS_VOICES
 
@@ -377,11 +377,25 @@ async def get_trending():
 async def websocket_progress(websocket: WebSocket, video_id: str):
     await websocket.accept()
     active_connections[video_id] = websocket
+    db = SessionLocal()
     try:
+        video = db.query(Video).filter(Video.id == video_id).first()
+        if video:
+            step = video.error_message if video.status == "failed" and video.error_message else video.generation_step
+            await websocket.send_json(
+                {
+                    "progress": video.generation_progress or 0,
+                    "step": step or "Starting...",
+                    "status": video.status or "generating",
+                }
+            )
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
+        pass
+    finally:
         active_connections.pop(video_id, None)
+        db.close()
 
 
 async def notify_progress(video_id: str, progress: int, step: str, status: str = "generating"):
@@ -429,29 +443,26 @@ async def _generate_video_pipeline(video_id: str, req: VideoCreate, user_id: str
         db.commit()
         await notify_progress(video_id, 30, "Script ready. Generating audio...")
 
-        # Step 2: Generate audio
-        from agent.audio_generator import run_generate_full_audio
-
+        # Step 2: Build video with mastered audio
         day_num = hash(video_id) % 9999
-        audio_path = run_generate_full_audio(script, day_num)
-        video.audio_path = str(audio_path)
         video.generation_progress = 55
-        video.generation_step = "Audio ready. Creating visuals..."
+        video.generation_step = "Rendering video with narration, music, and effects..."
         db.commit()
-        await notify_progress(video_id, 55, "Audio ready. Creating visuals...")
+        await notify_progress(video_id, 55, "Rendering video with narration, music, and effects...")
 
         # Step 3: Create video with art style
-        from agent.video_generator import create_video, create_thumbnail
+        from agent.video_generator import create_video, create_thumbnail_for_format
 
-        video_path = create_video(script, day_num)
+        video_path = create_video(script, day_num, video_format=req.video_format)
         video.video_path = str(video_path)
+        video.audio_path = str(AUDIO_DIR / f"day_{day_num:02d}_full.mp3")
         video.generation_progress = 85
         video.generation_step = "Video ready. Creating thumbnail..."
         db.commit()
         await notify_progress(video_id, 85, "Video ready. Creating thumbnail...")
 
         # Step 4: Create thumbnail
-        thumb_path = create_thumbnail(script, day_num)
+        thumb_path = create_thumbnail_for_format(script, day_num, video_format=req.video_format)
         video.thumbnail_path = str(thumb_path)
         video.generation_progress = 100
         video.generation_step = "Complete!"

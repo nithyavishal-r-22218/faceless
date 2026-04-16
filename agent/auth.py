@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from jose import JWTError, jwt
 
-SECRET_KEY = os.getenv("SECRET_KEY", os.urandom(32).hex())
+SECRET_KEY = os.getenv("SECRET_KEY", "faceless-dev-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 

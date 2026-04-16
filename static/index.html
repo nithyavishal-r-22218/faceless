@@ -5,481 +5,542 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Faceless — Create Viral Videos on Autopilot</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'sans-serif'] },
+      colors: {
+        brand: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' },
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'float-delayed': 'float 6s ease-in-out 3s infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+        'slide-up': 'slideUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards',
+        'fade-in': 'fadeIn 0.4s ease forwards',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16,1,0.3,1) forwards',
+        'shimmer': 'shimmer 2s linear infinite',
+        'spin-slow': 'spin 8s linear infinite',
+      },
+      keyframes: {
+        float: { '0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-20px)'} },
+        glow: { '0%':{boxShadow:'0 0 20px rgba(99,102,241,0.15)'},'100%':{boxShadow:'0 0 40px rgba(99,102,241,0.35)'} },
+        slideUp: { '0%':{opacity:0,transform:'translateY(30px)'},'100%':{opacity:1,transform:'translateY(0)'} },
+        fadeIn: { '0%':{opacity:0},'100%':{opacity:1} },
+        scaleIn: { '0%':{opacity:0,transform:'scale(0.95)'},'100%':{opacity:1,transform:'scale(1)'} },
+        shimmer: { '0%':{backgroundPosition:'-200% 0'},'100%':{backgroundPosition:'200% 0'} },
+      },
+    },
+  },
+}
+</script>
 <style>
 * { font-family: 'Inter', sans-serif; }
-.gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.gradient-text { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.card-hover { transition: all 0.3s ease; }
-.card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-.glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
-.pulse-dot { animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.slide-up { animation: slideUp 0.4s ease forwards; }
-.progress-bar { transition: width 0.5s ease; }
-[x-cloak] { display: none !important; }
-.sidebar-link { transition: all 0.2s; }
-.sidebar-link:hover, .sidebar-link.active { background: rgba(102,126,234,0.15); color: #667eea; }
-.niche-card { transition: all 0.2s; border: 2px solid transparent; }
-.niche-card.selected, .niche-card:hover { border-color: #667eea; background: rgba(102,126,234,0.05); }
-.style-card { transition: all 0.2s; border: 2px solid transparent; cursor: pointer; }
-.style-card.selected { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.2); }
+.glass { background: rgba(255,255,255,0.65); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255,255,255,0.4); }
+.glass-dark { background: rgba(15,23,42,0.7); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.08); }
+.glass-sidebar { background: rgba(255,255,255,0.72); backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%); border-right: 1px solid rgba(255,255,255,0.3); }
+.glass-card { background: rgba(255,255,255,0.55); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); transition: all 0.4s cubic-bezier(0.16,1,0.3,1); }
+.glass-card:hover { background: rgba(255,255,255,0.75); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(99,102,241,0.12), 0 8px 20px rgba(0,0,0,0.06); border-color: rgba(99,102,241,0.2); }
+.glass-input { background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.35); transition: all 0.3s ease; }
+.glass-input:focus { background: rgba(255,255,255,0.85); border-color: rgba(99,102,241,0.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+.mesh-bg { background: radial-gradient(ellipse at 20% 50%, rgba(120,119,198,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(99,102,241,0.12) 0%, transparent 50%), radial-gradient(ellipse at 40% 80%, rgba(168,85,247,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(59,130,246,0.08) 0%, transparent 50%), linear-gradient(135deg, #f0f4ff 0%, #faf5ff 25%, #f0f9ff 50%, #faf5ff 75%, #f0f4ff 100%); min-height: 100vh; }
+.auth-bg { background: radial-gradient(ellipse at 30% 30%, rgba(99,102,241,0.3) 0%, transparent 50%), radial-gradient(ellipse at 70% 70%, rgba(168,85,247,0.25) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.15) 0%, transparent 60%), linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #3730a3 60%, #1e1b4b 100%); }
+.btn-gradient { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%); background-size: 200% 200%; transition: all 0.4s ease; }
+.btn-gradient:hover { background-position: 100% 0; box-shadow: 0 8px 30px rgba(99,102,241,0.35); transform: translateY(-1px); }
+.sidebar-link { transition: all 0.25s cubic-bezier(0.16,1,0.3,1); position: relative; overflow: hidden; }
+.sidebar-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, #6366f1, #8b5cf6); border-radius: 0 2px 2px 0; transform: scaleY(0); transition: transform 0.25s cubic-bezier(0.16,1,0.3,1); }
+.sidebar-link:hover, .sidebar-link.active { background: rgba(99,102,241,0.08); color: #4f46e5; }
+.sidebar-link.active::before { transform: scaleY(1); }
+.sidebar-link .icon-wrapper { transition: all 0.25s ease; }
+.sidebar-link:hover .icon-wrapper, .sidebar-link.active .icon-wrapper { color: #6366f1; }
+.niche-card { transition: all 0.35s cubic-bezier(0.16,1,0.3,1); border: 2px solid transparent; cursor: pointer; }
+.niche-card.selected, .niche-card:hover { border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.06); box-shadow: 0 8px 30px rgba(99,102,241,0.1); }
+.niche-card.selected { border-color: #6366f1; }
+.style-card { transition: all 0.35s cubic-bezier(0.16,1,0.3,1); border: 2px solid transparent; cursor: pointer; }
+.style-card.selected { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: rgba(99,102,241,0.15); border-radius: 999px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(99,102,241,0.35); transition: all 0.2s; }
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); box-shadow: 0 4px 16px rgba(99,102,241,0.5); }
+input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; cursor: pointer; border: none; }
+.progress-bar-animated { background: linear-gradient(90deg, #6366f1, #8b5cf6, #6366f1); background-size: 200% 100%; animation: shimmer 2s linear infinite; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 999px; }
+.stagger-children > * { opacity: 0; animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+.auth-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; }
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
-
+<body class="text-gray-800 min-h-screen">
 <div id="app">
 
-<!-- ═══════════════════════════════════════════════════════════ -->
 <!-- AUTH SCREEN -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<div id="auth-screen" class="min-h-screen flex items-center justify-center gradient-bg">
-  <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md slide-up">
+<div id="auth-screen" class="min-h-screen flex items-center justify-center auth-bg relative overflow-hidden">
+  <div class="auth-orb w-96 h-96 bg-indigo-500 -top-20 -left-20 animate-float" style="position:absolute"></div>
+  <div class="auth-orb w-80 h-80 bg-purple-500 -bottom-20 -right-20 animate-float-delayed" style="position:absolute"></div>
+  <div class="auth-orb w-64 h-64 bg-blue-400 top-1/2 left-1/2 animate-float" style="position:absolute;transform:translate(-50%,-50%)"></div>
+
+  <div class="glass rounded-3xl shadow-2xl p-10 w-full max-w-md animate-scale-in relative z-10">
     <div class="text-center mb-8">
-      <div class="text-4xl mb-2">🎬</div>
-      <h1 class="text-3xl font-bold gradient-text">Faceless</h1>
-      <p class="text-gray-500 mt-2">Create viral videos on autopilot</p>
+      <div class="w-16 h-16 mx-auto rounded-2xl btn-gradient flex items-center justify-center mb-4 shadow-lg animate-glow">
+        <i data-lucide="clapperboard" class="w-8 h-8 text-white"></i>
+      </div>
+      <h1 class="text-3xl font-extrabold bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">Faceless</h1>
+      <p class="text-gray-500 mt-2 text-sm">Create viral videos on autopilot</p>
     </div>
 
-    <div id="auth-tabs" class="flex mb-6 bg-gray-100 rounded-lg p-1">
-      <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 px-4 rounded-md text-sm font-medium bg-white shadow text-gray-900">Sign In</button>
-      <button onclick="showAuthTab('register')" id="tab-register" class="flex-1 py-2 px-4 rounded-md text-sm font-medium text-gray-500">Sign Up</button>
+    <div id="auth-tabs" class="flex mb-6 glass-input rounded-xl p-1">
+      <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-300 bg-white shadow-sm text-gray-900">Sign In</button>
+      <button onclick="showAuthTab('register')" id="tab-register" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-300 text-gray-500">Sign Up</button>
     </div>
 
-    <form id="login-form" onsubmit="handleLogin(event)">
-      <input type="email" id="login-email" placeholder="Email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 mb-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
-      <input type="password" id="login-password" placeholder="Password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
-      <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition">Sign In</button>
+    <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3">
+      <div class="relative">
+        <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+        <input type="email" id="login-email" placeholder="Email" required class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input outline-none text-sm">
+      </div>
+      <div class="relative">
+        <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+        <input type="password" id="login-password" placeholder="Password" required class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input outline-none text-sm">
+      </div>
+      <button type="submit" class="w-full btn-gradient text-white py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 mt-2">
+        <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+      </button>
     </form>
 
-    <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
-      <input type="text" id="register-name" placeholder="Your name" class="w-full px-4 py-3 rounded-lg border border-gray-300 mb-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
-      <input type="email" id="register-email" placeholder="Email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 mb-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
-      <input type="password" id="register-password" placeholder="Password (min 6 chars)" required minlength="6" class="w-full px-4 py-3 rounded-lg border border-gray-300 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
-      <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition">Create Account</button>
+    <form id="register-form" class="hidden space-y-3" onsubmit="handleRegister(event)">
+      <div class="relative">
+        <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+        <input type="text" id="register-name" placeholder="Your name" class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input outline-none text-sm">
+      </div>
+      <div class="relative">
+        <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+        <input type="email" id="register-email" placeholder="Email" required class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input outline-none text-sm">
+      </div>
+      <div class="relative">
+        <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+        <input type="password" id="register-password" placeholder="Password (min 6 chars)" required minlength="6" class="w-full pl-11 pr-4 py-3.5 rounded-xl glass-input outline-none text-sm">
+      </div>
+      <button type="submit" class="w-full btn-gradient text-white py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 mt-2">
+        <i data-lucide="user-plus" class="w-4 h-4"></i> Create Account
+      </button>
     </form>
 
-    <div id="auth-error" class="mt-4 text-red-500 text-sm text-center hidden"></div>
-
+    <div id="auth-error" class="mt-4 text-red-500 text-sm text-center hidden">
+      <span id="auth-error-text"></span>
+    </div>
     <p class="text-center text-xs text-gray-400 mt-6">By signing up, you agree to our Terms of Service</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
 <!-- MAIN DASHBOARD -->
-<!-- ═══════════════════════════════════════════════════════════ -->
 <div id="dashboard-screen" class="hidden">
-  <div class="flex min-h-screen">
+  <div class="flex min-h-screen mesh-bg">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full z-20">
-      <div class="p-6 border-b border-gray-100">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">🎬</span>
-          <span class="text-xl font-bold gradient-text">Faceless</span>
+    <aside class="w-72 glass-sidebar flex flex-col fixed h-full z-20">
+      <div class="p-6 border-b border-white/20">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl btn-gradient flex items-center justify-center shadow-md">
+            <i data-lucide="clapperboard" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="text-xl font-extrabold bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">Faceless</span>
         </div>
       </div>
-
       <nav class="flex-1 p-4 space-y-1">
-        <a onclick="navigate('dashboard')" class="sidebar-link active flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="dashboard">
-          <span>📊</span> Dashboard
+        <a onclick="navigate('dashboard')" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="dashboard">
+          <span class="icon-wrapper"><i data-lucide="layout-dashboard" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">Dashboard</span>
         </a>
-        <a onclick="navigate('create')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="create">
-          <span>✨</span> Create Video
+        <a onclick="navigate('create')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="create">
+          <span class="icon-wrapper"><i data-lucide="sparkles" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">Create Video</span>
         </a>
-        <a onclick="navigate('series')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="series">
-          <span>📁</span> My Series
+        <a onclick="navigate('series')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="series">
+          <span class="icon-wrapper"><i data-lucide="folder-open" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">My Series</span>
         </a>
-        <a onclick="navigate('videos')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="videos">
-          <span>🎥</span> My Videos
+        <a onclick="navigate('videos')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="videos">
+          <span class="icon-wrapper"><i data-lucide="film" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">My Videos</span>
         </a>
-        <a onclick="navigate('schedule')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="schedule">
-          <span>📅</span> Schedule
+        <a onclick="navigate('schedule')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="schedule">
+          <span class="icon-wrapper"><i data-lucide="calendar-clock" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">Schedule</span>
         </a>
-        <a onclick="navigate('platforms')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="platforms">
-          <span>🔗</span> Platforms
+        <a onclick="navigate('platforms')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="platforms">
+          <span class="icon-wrapper"><i data-lucide="plug" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">Platforms</span>
         </a>
-        <a onclick="navigate('trending')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="trending">
-          <span>🔥</span> Trending
+        <a onclick="navigate('trending')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="trending">
+          <span class="icon-wrapper"><i data-lucide="trending-up" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">Trending</span>
         </a>
-        <a onclick="navigate('analytics')" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer" data-page="analytics">
-          <span>📈</span> Analytics
+        <a onclick="navigate('analytics')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer" data-page="analytics">
+          <span class="icon-wrapper"><i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i></span>
+          <span class="text-sm font-medium">Analytics</span>
         </a>
       </nav>
-
-      <div class="p-4 border-t border-gray-100">
+      <div class="p-4 border-t border-white/20">
         <div class="flex items-center gap-3 mb-3">
-          <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white text-sm font-bold" id="user-avatar">U</div>
-          <div>
-            <div class="text-sm font-medium" id="user-name">User</div>
+          <div class="w-9 h-9 rounded-xl btn-gradient flex items-center justify-center text-white text-sm font-bold shadow-sm" id="user-avatar">U</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold truncate" id="user-name">User</div>
             <div class="text-xs text-gray-500" id="user-plan">Free Plan</div>
           </div>
         </div>
-        <button onclick="logout()" class="w-full text-sm text-gray-500 hover:text-red-500 transition">Sign Out</button>
+        <button onclick="logout()" class="w-full flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-red-500 transition-colors py-2 rounded-lg hover:bg-red-50/50">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+        </button>
       </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 ml-64">
+    <main class="flex-1 ml-72">
 
-      <!-- ── Dashboard Page ─────────────────── -->
+      <!-- Dashboard Page -->
       <div id="page-dashboard" class="p-8">
-        <div class="mb-8">
-          <h1 class="text-2xl font-bold">Welcome back! 👋</h1>
-          <p class="text-gray-500">Here's how your content is performing</p>
+        <div class="mb-8 animate-slide-up">
+          <h1 class="text-3xl font-extrabold text-gray-900">Welcome back</h1>
+          <p class="text-gray-500 mt-1">Here's how your content is performing</p>
         </div>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 stagger-children">
+          <div class="glass-card rounded-2xl p-6">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-2xl">🎬</span>
-              <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Total</span>
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-200">
+                <i data-lucide="video" class="w-5 h-5 text-white"></i>
+              </div>
+              <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">Total</span>
             </div>
-            <div class="text-3xl font-bold" id="stat-videos">0</div>
+            <div class="text-3xl font-extrabold tracking-tight" id="stat-videos">0</div>
             <div class="text-sm text-gray-500 mt-1">Videos Created</div>
           </div>
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="glass-card rounded-2xl p-6">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-2xl">👁️</span>
-              <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Views</span>
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200">
+                <i data-lucide="eye" class="w-5 h-5 text-white"></i>
+              </div>
+              <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">Views</span>
             </div>
-            <div class="text-3xl font-bold" id="stat-views">0</div>
+            <div class="text-3xl font-extrabold tracking-tight" id="stat-views">0</div>
             <div class="text-sm text-gray-500 mt-1">Total Views</div>
           </div>
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="glass-card rounded-2xl p-6">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-2xl">❤️</span>
-              <span class="text-xs font-medium text-pink-600 bg-pink-50 px-2 py-1 rounded-full">Likes</span>
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-md shadow-rose-200">
+                <i data-lucide="heart" class="w-5 h-5 text-white"></i>
+              </div>
+              <span class="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">Likes</span>
             </div>
-            <div class="text-3xl font-bold" id="stat-likes">0</div>
+            <div class="text-3xl font-extrabold tracking-tight" id="stat-likes">0</div>
             <div class="text-sm text-gray-500 mt-1">Total Likes</div>
           </div>
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="glass-card rounded-2xl p-6">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-2xl">📁</span>
-              <span class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Active</span>
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md shadow-violet-200">
+                <i data-lucide="layers" class="w-5 h-5 text-white"></i>
+              </div>
+              <span class="text-xs font-semibold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-full border border-violet-100">Active</span>
             </div>
-            <div class="text-3xl font-bold" id="stat-series">0</div>
+            <div class="text-3xl font-extrabold tracking-tight" id="stat-series">0</div>
             <div class="text-sm text-gray-500 mt-1">Active Series</div>
           </div>
         </div>
-
-        <!-- Quick Actions -->
-        <div class="bg-white rounded-xl p-6 shadow-sm mb-8">
-          <h2 class="font-semibold text-lg mb-4">Quick Actions</h2>
+        <div class="glass-card rounded-2xl p-6 mb-8 animate-slide-up" style="animation-delay:0.2s">
+          <h2 class="font-bold text-lg mb-5 flex items-center gap-2">
+            <i data-lucide="zap" class="w-5 h-5 text-brand-500"></i> Quick Actions
+          </h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button onclick="navigate('create')" class="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition group">
-              <span class="text-3xl">✨</span>
+            <button onclick="navigate('create')" class="group flex items-center gap-4 p-5 rounded-2xl border-2 border-dashed border-gray-200/60 hover:border-brand-300 hover:bg-brand-50/30 transition-all duration-300">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+                <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+              </div>
               <div class="text-left">
-                <div class="font-medium group-hover:text-indigo-600">Create New Video</div>
-                <div class="text-sm text-gray-500">AI generates everything for you</div>
+                <div class="font-semibold text-sm group-hover:text-brand-600 transition-colors">Create New Video</div>
+                <div class="text-xs text-gray-500">AI generates everything for you</div>
               </div>
             </button>
-            <button onclick="navigate('series')" class="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition group">
-              <span class="text-3xl">📁</span>
+            <button onclick="navigate('series')" class="group flex items-center gap-4 p-5 rounded-2xl border-2 border-dashed border-gray-200/60 hover:border-brand-300 hover:bg-brand-50/30 transition-all duration-300">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+                <i data-lucide="folder-plus" class="w-6 h-6 text-white"></i>
+              </div>
               <div class="text-left">
-                <div class="font-medium group-hover:text-indigo-600">Create Series</div>
-                <div class="text-sm text-gray-500">Auto-post on schedule</div>
+                <div class="font-semibold text-sm group-hover:text-brand-600 transition-colors">Create Series</div>
+                <div class="text-xs text-gray-500">Auto-post on schedule</div>
               </div>
             </button>
-            <button onclick="navigate('trending')" class="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition group">
-              <span class="text-3xl">🔥</span>
+            <button onclick="navigate('trending')" class="group flex items-center gap-4 p-5 rounded-2xl border-2 border-dashed border-gray-200/60 hover:border-brand-300 hover:bg-brand-50/30 transition-all duration-300">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+                <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+              </div>
               <div class="text-left">
-                <div class="font-medium group-hover:text-indigo-600">Explore Trending</div>
-                <div class="text-sm text-gray-500">Find viral content ideas</div>
+                <div class="font-semibold text-sm group-hover:text-brand-600 transition-colors">Explore Trending</div>
+                <div class="text-xs text-gray-500">Find viral content ideas</div>
               </div>
             </button>
           </div>
         </div>
-
-        <!-- Recent Videos -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h2 class="font-semibold text-lg mb-4">Recent Videos</h2>
-          <div id="recent-videos-list" class="space-y-3">
-            <div class="text-gray-400 text-center py-8">No videos yet. Create your first video! ✨</div>
+        <div class="glass-card rounded-2xl p-6 animate-slide-up" style="animation-delay:0.3s">
+          <h2 class="font-bold text-lg mb-5 flex items-center gap-2">
+            <i data-lucide="clock" class="w-5 h-5 text-brand-500"></i> Recent Videos
+          </h2>
+          <div id="recent-videos-list" class="space-y-2">
+            <div class="text-gray-400 text-center py-10 flex flex-col items-center gap-3">
+              <i data-lucide="film" class="w-10 h-10 text-gray-300"></i>
+              <span>No videos yet. Create your first video!</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- ── Create Video Page ──────────────── -->
+      <!-- Create Video Page -->
       <div id="page-create" class="p-8 hidden">
-        <div class="mb-8">
-          <h1 class="text-2xl font-bold">Create New Video ✨</h1>
-          <p class="text-gray-500">Our AI will generate a complete video in minutes</p>
+        <div class="mb-8 animate-slide-up">
+          <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
+            <i data-lucide="sparkles" class="w-8 h-8 text-brand-500"></i> Create New Video
+          </h1>
+          <p class="text-gray-500 mt-1">Our AI will generate a complete video in minutes</p>
         </div>
-
-        <!-- Step Indicator -->
-        <div class="flex items-center gap-2 mb-8">
+        <div class="flex items-center gap-3 mb-10">
           <div class="step-indicator flex items-center gap-2" data-step="1">
-            <div class="w-8 h-8 rounded-full gradient-bg text-white flex items-center justify-center text-sm font-bold">1</div>
-            <span class="text-sm font-medium">Choose Niche</span>
+            <div class="w-9 h-9 rounded-full btn-gradient text-white flex items-center justify-center text-sm font-bold shadow-md">1</div>
+            <span class="text-sm font-semibold hidden sm:inline">Choose Niche</span>
           </div>
-          <div class="w-8 h-px bg-gray-300"></div>
+          <div class="flex-1 h-px bg-gradient-to-r from-brand-300 to-brand-100 max-w-[60px]"></div>
           <div class="step-indicator flex items-center gap-2 opacity-40" data-step="2">
-            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold">2</div>
-            <span class="text-sm font-medium">Art Style</span>
+            <div class="w-9 h-9 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold">2</div>
+            <span class="text-sm font-semibold hidden sm:inline">Art Style</span>
           </div>
-          <div class="w-8 h-px bg-gray-300"></div>
+          <div class="flex-1 h-px bg-gray-200 max-w-[60px]"></div>
           <div class="step-indicator flex items-center gap-2 opacity-40" data-step="3">
-            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold">3</div>
-            <span class="text-sm font-medium">Details</span>
+            <div class="w-9 h-9 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold">3</div>
+            <span class="text-sm font-semibold hidden sm:inline">Details</span>
           </div>
-          <div class="w-8 h-px bg-gray-300"></div>
+          <div class="flex-1 h-px bg-gray-200 max-w-[60px]"></div>
           <div class="step-indicator flex items-center gap-2 opacity-40" data-step="4">
-            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold">4</div>
-            <span class="text-sm font-medium">Generate</span>
+            <div class="w-9 h-9 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold">4</div>
+            <span class="text-sm font-semibold hidden sm:inline">Generate</span>
           </div>
         </div>
 
-        <!-- Step 1: Choose Niche -->
-        <div id="create-step-1" class="slide-up">
-          <h2 class="text-lg font-semibold mb-4">What type of content do you want to create?</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4" id="niche-grid">
-            <!-- Filled by JS -->
-          </div>
-          <div class="mt-6 flex justify-end">
-            <button onclick="createStep(2)" class="gradient-bg text-white px-6 py-2.5 rounded-lg font-medium hover:opacity-90">Next →</button>
-          </div>
-        </div>
-
-        <!-- Step 2: Art Style -->
-        <div id="create-step-2" class="hidden slide-up">
-          <h2 class="text-lg font-semibold mb-4">Choose your visual style</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4" id="style-grid">
-            <!-- Filled by JS -->
-          </div>
-          <div class="mt-6 flex justify-between">
-            <button onclick="createStep(1)" class="text-gray-500 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-100">← Back</button>
-            <button onclick="createStep(3)" class="gradient-bg text-white px-6 py-2.5 rounded-lg font-medium hover:opacity-90">Next →</button>
+        <div id="create-step-1" class="animate-slide-up">
+          <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
+            <i data-lucide="grid-3x3" class="w-5 h-5 text-brand-500"></i> What type of content?
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children" id="niche-grid"></div>
+          <div class="mt-8 flex justify-end">
+            <button onclick="createStep(2)" class="btn-gradient text-white px-7 py-3 rounded-xl font-semibold text-sm flex items-center gap-2">Next <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
           </div>
         </div>
 
-        <!-- Step 3: Details -->
-        <div id="create-step-3" class="hidden slide-up">
+        <div id="create-step-2" class="hidden animate-slide-up">
+          <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
+            <i data-lucide="palette" class="w-5 h-5 text-brand-500"></i> Choose your visual style
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 stagger-children" id="style-grid"></div>
+          <div class="mt-8 flex justify-between">
+            <button onclick="createStep(1)" class="text-gray-500 px-6 py-3 rounded-xl font-medium hover:bg-white/50 transition flex items-center gap-2 text-sm"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+            <button onclick="createStep(3)" class="btn-gradient text-white px-7 py-3 rounded-xl font-semibold text-sm flex items-center gap-2">Next <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+
+        <div id="create-step-3" class="hidden animate-slide-up">
           <div class="max-w-xl">
-            <h2 class="text-lg font-semibold mb-4">Customize your video</h2>
-
-            <label class="block mb-4">
-              <span class="text-sm font-medium text-gray-700">Topic (optional — AI will pick if blank)</span>
-              <input type="text" id="create-topic" placeholder="e.g., The Lion and the Mouse story" class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
-            </label>
-
-            <label class="block mb-4">
-              <span class="text-sm font-medium text-gray-700">Voice</span>
-              <select id="create-voice" class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
-              </select>
-            </label>
-
-            <label class="block mb-4">
-              <span class="text-sm font-medium text-gray-700">Background Music</span>
-              <select id="create-music" class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
-              </select>
-            </label>
-
-            <label class="block mb-4">
-              <span class="text-sm font-medium text-gray-700">Video Format</span>
-              <div class="flex gap-4 mt-2">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="create-format" value="short" checked class="text-indigo-500">
-                  <span>📱 Short / Reel (9:16)</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="create-format" value="long" class="text-indigo-500">
-                  <span>🖥️ Long (16:9)</span>
-                </label>
+            <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
+              <i data-lucide="sliders-horizontal" class="w-5 h-5 text-brand-500"></i> Customize your video
+            </h2>
+            <div class="space-y-5">
+              <label class="block">
+                <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-2"><i data-lucide="message-square" class="w-4 h-4 text-gray-400"></i> Topic <span class="text-xs text-gray-400 font-normal">(optional)</span></span>
+                <input type="text" id="create-topic" placeholder="e.g., The Lion and the Mouse story" class="w-full px-4 py-3.5 rounded-xl glass-input outline-none text-sm">
+              </label>
+              <label class="block">
+                <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-2"><i data-lucide="mic" class="w-4 h-4 text-gray-400"></i> Voice</span>
+                <select id="create-voice" class="w-full px-4 py-3.5 rounded-xl glass-input outline-none text-sm cursor-pointer"></select>
+              </label>
+              <label class="block">
+                <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-2"><i data-lucide="music" class="w-4 h-4 text-gray-400"></i> Background Music</span>
+                <select id="create-music" class="w-full px-4 py-3.5 rounded-xl glass-input outline-none text-sm cursor-pointer"></select>
+              </label>
+              <div>
+                <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-3"><i data-lucide="monitor-smartphone" class="w-4 h-4 text-gray-400"></i> Video Format</span>
+                <div class="flex gap-3">
+                  <label class="flex-1 cursor-pointer">
+                    <input type="radio" name="create-format" value="short" checked class="hidden peer">
+                    <div class="glass-card rounded-xl p-4 text-center peer-checked:border-brand-500 peer-checked:bg-brand-50/40 transition-all">
+                      <i data-lucide="smartphone" class="w-6 h-6 mx-auto mb-2 text-gray-500"></i>
+                      <div class="text-sm font-semibold">Short / Reel</div>
+                      <div class="text-xs text-gray-400">9:16 vertical</div>
+                    </div>
+                  </label>
+                  <label class="flex-1 cursor-pointer">
+                    <input type="radio" name="create-format" value="long" class="hidden peer">
+                    <div class="glass-card rounded-xl p-4 text-center peer-checked:border-brand-500 peer-checked:bg-brand-50/40 transition-all">
+                      <i data-lucide="monitor" class="w-6 h-6 mx-auto mb-2 text-gray-500"></i>
+                      <div class="text-sm font-semibold">Long Form</div>
+                      <div class="text-xs text-gray-400">16:9 landscape</div>
+                    </div>
+                  </label>
+                </div>
               </div>
-            </label>
-
-            <label class="block mb-4">
-              <span class="text-sm font-medium text-gray-700">Target Duration</span>
-              <select id="create-duration" class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none">
-                <option value="30">30 seconds</option>
-                <option value="60" selected>1 minute</option>
-                <option value="120">2 minutes</option>
-                <option value="180">3 minutes</option>
-                <option value="300">5 minutes</option>
-              </select>
-            </label>
+              <div>
+                <span class="text-sm font-semibold text-gray-700 flex items-center gap-2 mb-3">
+                  <i data-lucide="timer" class="w-4 h-4 text-gray-400"></i> Target Duration
+                  <span class="ml-auto text-brand-600 font-bold text-base" id="duration-display">60s</span>
+                </span>
+                <input type="range" id="create-duration" min="15" max="300" value="60" step="15" oninput="updateDuration(this.value)">
+                <div class="flex justify-between text-xs text-gray-400 mt-1"><span>15s</span><span>1m</span><span>2m</span><span>3m</span><span>5m</span></div>
+              </div>
+            </div>
           </div>
-
-          <div class="mt-6 flex justify-between">
-            <button onclick="createStep(2)" class="text-gray-500 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-100">← Back</button>
-            <button onclick="createStep(4)" class="gradient-bg text-white px-6 py-2.5 rounded-lg font-medium hover:opacity-90">Generate Video ✨</button>
+          <div class="mt-8 flex justify-between">
+            <button onclick="createStep(2)" class="text-gray-500 px-6 py-3 rounded-xl font-medium hover:bg-white/50 transition flex items-center gap-2 text-sm"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+            <button onclick="createStep(4)" class="btn-gradient text-white px-7 py-3 rounded-xl font-semibold text-sm flex items-center gap-2"><i data-lucide="wand-2" class="w-4 h-4"></i> Generate Video</button>
           </div>
         </div>
 
-        <!-- Step 4: Generating -->
-        <div id="create-step-4" class="hidden slide-up">
-          <div class="max-w-lg mx-auto text-center py-12">
-            <div class="text-6xl mb-6">🎬</div>
-            <h2 class="text-xl font-bold mb-2">Creating your video...</h2>
-            <p class="text-gray-500 mb-8" id="gen-step-text">Starting up the AI pipeline...</p>
-
-            <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
-              <div class="gradient-bg h-3 rounded-full progress-bar" id="gen-progress-bar" style="width: 0%"></div>
+        <div id="create-step-4" class="hidden animate-slide-up">
+          <div class="max-w-lg mx-auto text-center py-16">
+            <div class="w-20 h-20 mx-auto rounded-2xl btn-gradient flex items-center justify-center mb-6 shadow-lg animate-glow">
+              <i data-lucide="clapperboard" class="w-10 h-10 text-white animate-spin-slow"></i>
             </div>
-            <div class="text-sm text-gray-500" id="gen-progress-pct">0%</div>
-
-            <div id="gen-complete" class="hidden mt-8">
-              <div class="text-5xl mb-4">🎉</div>
-              <h3 class="text-lg font-bold text-green-600">Video Ready!</h3>
-              <div class="flex gap-4 justify-center mt-6">
-                <button onclick="navigate('videos')" class="gradient-bg text-white px-6 py-2.5 rounded-lg font-medium hover:opacity-90">View Videos</button>
-                <button onclick="createStep(1); selectedNiche=''; selectedStyle='';" class="border border-gray-300 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-50">Create Another</button>
+            <h2 class="text-2xl font-extrabold mb-2">Creating your video...</h2>
+            <p class="text-gray-500 mb-8 text-sm" id="gen-step-text">Starting up the AI pipeline...</p>
+            <div class="w-full bg-gray-100 rounded-full h-3 mb-3 overflow-hidden">
+              <div class="progress-bar-animated h-3 rounded-full" id="gen-progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="text-sm font-semibold text-brand-600" id="gen-progress-pct">0%</div>
+            <div id="gen-complete" class="hidden mt-10 animate-scale-in">
+              <div class="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+                <i data-lucide="check-circle-2" class="w-8 h-8 text-emerald-600"></i>
+              </div>
+              <h3 class="text-lg font-bold text-emerald-600">Video Ready!</h3>
+              <div class="flex gap-3 justify-center mt-6">
+                <button onclick="navigate('videos')" class="btn-gradient text-white px-6 py-3 rounded-xl font-semibold text-sm flex items-center gap-2"><i data-lucide="play" class="w-4 h-4"></i> View Videos</button>
+                <button onclick="createStep(1); selectedNiche=''; selectedStyle='';" class="glass-card px-6 py-3 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-white/80"><i data-lucide="plus" class="w-4 h-4"></i> Create Another</button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── Series Page ────────────────────── -->
+      <!-- Series Page -->
       <div id="page-series" class="p-8 hidden">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-8 animate-slide-up">
           <div>
-            <h1 class="text-2xl font-bold">My Series 📁</h1>
-            <p class="text-gray-500">Auto-post content on a schedule</p>
+            <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3"><i data-lucide="folder-open" class="w-8 h-8 text-brand-500"></i> My Series</h1>
+            <p class="text-gray-500 mt-1">Auto-post content on a schedule</p>
           </div>
-          <button onclick="showCreateSeriesModal()" class="gradient-bg text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90">+ New Series</button>
+          <button onclick="showCreateSeriesModal()" class="btn-gradient text-white px-5 py-3 rounded-xl font-semibold text-sm flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> New Series</button>
         </div>
-
-        <div id="series-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="text-gray-400 text-center py-12 col-span-full">No series yet. Create your first series to start auto-posting!</div>
+        <div id="series-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="text-gray-400 text-center py-14 col-span-full flex flex-col items-center gap-3"><i data-lucide="folder-open" class="w-10 h-10 text-gray-300"></i><span>No series yet. Create your first series!</span></div>
         </div>
       </div>
 
-      <!-- ── Videos Page ────────────────────── -->
+      <!-- Videos Page -->
       <div id="page-videos" class="p-8 hidden">
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-8 animate-slide-up">
           <div>
-            <h1 class="text-2xl font-bold">My Videos 🎥</h1>
-            <p class="text-gray-500">All your generated videos</p>
+            <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3"><i data-lucide="film" class="w-8 h-8 text-brand-500"></i> My Videos</h1>
+            <p class="text-gray-500 mt-1">All your generated videos</p>
           </div>
-          <button onclick="navigate('create')" class="gradient-bg text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90">+ Create Video</button>
+          <button onclick="navigate('create')" class="btn-gradient text-white px-5 py-3 rounded-xl font-semibold text-sm flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> Create Video</button>
         </div>
-
-        <div id="videos-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="text-gray-400 text-center py-12 col-span-full">No videos yet.</div>
+        <div id="videos-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="text-gray-400 text-center py-14 col-span-full flex flex-col items-center gap-3"><i data-lucide="film" class="w-10 h-10 text-gray-300"></i><span>No videos yet.</span></div>
         </div>
       </div>
 
-      <!-- ── Schedule Page ──────────────────── -->
+      <!-- Schedule Page -->
       <div id="page-schedule" class="p-8 hidden">
-        <div class="mb-8">
-          <h1 class="text-2xl font-bold">Schedule 📅</h1>
-          <p class="text-gray-500">Upcoming posts across all platforms</p>
+        <div class="mb-8 animate-slide-up">
+          <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3"><i data-lucide="calendar-clock" class="w-8 h-8 text-brand-500"></i> Schedule</h1>
+          <p class="text-gray-500 mt-1">Upcoming posts across all platforms</p>
         </div>
         <div id="schedule-list" class="space-y-4">
-          <div class="text-gray-400 text-center py-12">No scheduled posts yet.</div>
+          <div class="text-gray-400 text-center py-14 flex flex-col items-center gap-3"><i data-lucide="calendar-x" class="w-10 h-10 text-gray-300"></i><span>No scheduled posts yet.</span></div>
         </div>
       </div>
 
-      <!-- ── Platforms Page ─────────────────── -->
+      <!-- Platforms Page -->
       <div id="page-platforms" class="p-8 hidden">
-        <div class="mb-8">
-          <h1 class="text-2xl font-bold">Connected Platforms 🔗</h1>
-          <p class="text-gray-500">Connect your social accounts for auto-posting</p>
+        <div class="mb-8 animate-slide-up">
+          <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3"><i data-lucide="plug" class="w-8 h-8 text-brand-500"></i> Connected Platforms</h1>
+          <p class="text-gray-500 mt-1">Connect your social accounts for auto-posting</p>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-2xl">▶️</div>
-              <div>
-                <h3 class="font-semibold">YouTube</h3>
-                <p class="text-sm text-gray-500">Shorts & Videos</p>
-              </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-5">
+              <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-md shadow-red-200"><i data-lucide="youtube" class="w-6 h-6 text-white"></i></div>
+              <div><h3 class="font-bold">YouTube</h3><p class="text-xs text-gray-500">Shorts & Videos</p></div>
             </div>
-            <div id="yt-status" class="text-sm text-gray-400 mb-4">Not connected</div>
-            <button onclick="connectPlatform('youtube')" class="w-full border border-gray-200 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">Connect</button>
+            <div id="yt-status" class="text-sm text-gray-400 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-300"></span> Not connected</div>
+            <button onclick="connectPlatform('youtube')" class="w-full glass-input py-2.5 rounded-xl text-sm font-semibold hover:bg-white/80 transition flex items-center justify-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> Connect</button>
           </div>
-
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center text-2xl">🎵</div>
-              <div>
-                <h3 class="font-semibold">TikTok</h3>
-                <p class="text-sm text-gray-500">Short videos</p>
-              </div>
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-5">
+              <div class="w-12 h-12 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-md"><i data-lucide="music-2" class="w-6 h-6 text-white"></i></div>
+              <div><h3 class="font-bold">TikTok</h3><p class="text-xs text-gray-500">Short videos</p></div>
             </div>
-            <div class="text-sm text-gray-400 mb-4">Not connected</div>
-            <button onclick="connectPlatform('tiktok')" class="w-full border border-gray-200 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">Connect</button>
+            <div class="text-sm text-gray-400 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-300"></span> Not connected</div>
+            <button onclick="connectPlatform('tiktok')" class="w-full glass-input py-2.5 rounded-xl text-sm font-semibold hover:bg-white/80 transition flex items-center justify-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> Connect</button>
           </div>
-
-          <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-12 h-12 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 rounded-xl flex items-center justify-center text-2xl">📸</div>
-              <div>
-                <h3 class="font-semibold">Instagram</h3>
-                <p class="text-sm text-gray-500">Reels</p>
-              </div>
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-5">
+              <div class="w-12 h-12 bg-gradient-to-br from-pink-500 via-purple-500 to-orange-400 rounded-xl flex items-center justify-center shadow-md"><i data-lucide="instagram" class="w-6 h-6 text-white"></i></div>
+              <div><h3 class="font-bold">Instagram</h3><p class="text-xs text-gray-500">Reels</p></div>
             </div>
-            <div class="text-sm text-gray-400 mb-4">Not connected</div>
-            <button onclick="connectPlatform('instagram')" class="w-full border border-gray-200 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">Connect</button>
+            <div class="text-sm text-gray-400 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gray-300"></span> Not connected</div>
+            <button onclick="connectPlatform('instagram')" class="w-full glass-input py-2.5 rounded-xl text-sm font-semibold hover:bg-white/80 transition flex items-center justify-center gap-2"><i data-lucide="link" class="w-4 h-4"></i> Connect</button>
           </div>
         </div>
       </div>
 
-      <!-- ── Trending Page ──────────────────── -->
+      <!-- Trending Page -->
       <div id="page-trending" class="p-8 hidden">
-        <div class="mb-8">
-          <h1 class="text-2xl font-bold">Trending Content 🔥</h1>
-          <p class="text-gray-500">Discover viral topics in your niche</p>
+        <div class="mb-8 animate-slide-up">
+          <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3"><i data-lucide="trending-up" class="w-8 h-8 text-brand-500"></i> Trending Content</h1>
+          <p class="text-gray-500 mt-1">Discover viral topics in your niche</p>
         </div>
-
-        <button onclick="loadTrending()" class="gradient-bg text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 mb-6">🔍 Find Trending Videos</button>
-
+        <button onclick="loadTrending()" class="btn-gradient text-white px-6 py-3 rounded-xl font-semibold text-sm flex items-center gap-2 mb-8"><i data-lucide="search" class="w-4 h-4"></i> Find Trending Videos</button>
         <div id="trending-content" class="space-y-6">
-          <div class="text-gray-400 text-center py-12">Click "Find Trending Videos" to discover what's going viral right now.</div>
+          <div class="text-gray-400 text-center py-14 flex flex-col items-center gap-3"><i data-lucide="compass" class="w-10 h-10 text-gray-300"></i><span>Click "Find Trending Videos" to discover what's going viral.</span></div>
         </div>
       </div>
 
-      <!-- ── Analytics Page ─────────────────── -->
+      <!-- Analytics Page -->
       <div id="page-analytics" class="p-8 hidden">
-        <div class="mb-8">
-          <h1 class="text-2xl font-bold">Analytics 📈</h1>
-          <p class="text-gray-500">Track your channel performance</p>
+        <div class="mb-8 animate-slide-up">
+          <h1 class="text-3xl font-extrabold text-gray-900 flex items-center gap-3"><i data-lucide="bar-chart-3" class="w-8 h-8 text-brand-500"></i> Analytics</h1>
+          <p class="text-gray-500 mt-1">Track your channel performance</p>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-white rounded-xl p-6 shadow-sm">
-            <h3 class="font-semibold mb-4">Performance Overview</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-children">
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="font-bold mb-5 flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-brand-500"></i> Performance Overview</h3>
             <div class="space-y-4">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500">Total Videos</span>
-                <span class="font-bold" id="analytics-total-videos">0</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500">Posted Videos</span>
-                <span class="font-bold" id="analytics-posted">0</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500">Total Views</span>
-                <span class="font-bold" id="analytics-views">0</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500">Total Likes</span>
-                <span class="font-bold" id="analytics-likes">0</span>
-              </div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-100"><span class="text-sm text-gray-500 flex items-center gap-2"><i data-lucide="video" class="w-4 h-4"></i> Total Videos</span><span class="font-bold text-lg" id="analytics-total-videos">0</span></div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-100"><span class="text-sm text-gray-500 flex items-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Posted Videos</span><span class="font-bold text-lg" id="analytics-posted">0</span></div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-100"><span class="text-sm text-gray-500 flex items-center gap-2"><i data-lucide="eye" class="w-4 h-4"></i> Total Views</span><span class="font-bold text-lg" id="analytics-views">0</span></div>
+              <div class="flex justify-between items-center py-2"><span class="text-sm text-gray-500 flex items-center gap-2"><i data-lucide="heart" class="w-4 h-4"></i> Total Likes</span><span class="font-bold text-lg" id="analytics-likes">0</span></div>
             </div>
           </div>
-
-          <div class="bg-white rounded-xl p-6 shadow-sm">
-            <h3 class="font-semibold mb-4">Plan & Usage</h3>
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="font-bold mb-5 flex items-center gap-2"><i data-lucide="crown" class="w-5 h-5 text-amber-500"></i> Plan & Usage</h3>
             <div class="space-y-4">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500">Current Plan</span>
-                <span class="font-bold capitalize" id="analytics-plan">Free</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500">Videos Remaining</span>
-                <span class="font-bold" id="analytics-remaining">3</span>
-              </div>
-              <div class="mt-4">
-                <button class="w-full gradient-bg text-white py-2.5 rounded-lg font-medium hover:opacity-90">Upgrade Plan ⚡</button>
-              </div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-100"><span class="text-sm text-gray-500 flex items-center gap-2"><i data-lucide="badge-check" class="w-4 h-4"></i> Current Plan</span><span class="font-bold text-lg capitalize" id="analytics-plan">Free</span></div>
+              <div class="flex justify-between items-center py-2 border-b border-gray-100"><span class="text-sm text-gray-500 flex items-center gap-2"><i data-lucide="coins" class="w-4 h-4"></i> Videos Remaining</span><span class="font-bold text-lg" id="analytics-remaining">3</span></div>
+              <div class="mt-4"><button class="w-full btn-gradient text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4"></i> Upgrade Plan</button></div>
             </div>
           </div>
         </div>
@@ -489,481 +550,357 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- Toast Notification -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-lg hidden z-50 transition-all">
-  <span id="toast-msg"></span>
+<!-- Series Create Modal -->
+<div id="series-modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeSeriesModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="glass rounded-2xl shadow-2xl p-8 w-full max-w-md animate-scale-in">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-extrabold flex items-center gap-2"><i data-lucide="folder-plus" class="w-5 h-5 text-brand-500"></i> New Series</h2>
+        <button onclick="closeSeriesModal()" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition"><i data-lucide="x" class="w-5 h-5 text-gray-400"></i></button>
+      </div>
+      <form onsubmit="handleCreateSeries(event)" class="space-y-4">
+        <div><label class="text-sm font-semibold text-gray-700 mb-1.5 block">Series Name</label><input type="text" id="series-name" required placeholder="e.g., Morning Motivation" class="w-full px-4 py-3 rounded-xl glass-input outline-none text-sm"></div>
+        <div><label class="text-sm font-semibold text-gray-700 mb-1.5 block">Niche</label><select id="series-niche" class="w-full px-4 py-3 rounded-xl glass-input outline-none text-sm cursor-pointer"><option value="kids_cartoon">Kids Cartoon</option><option value="scary_stories">Scary Stories</option><option value="history">History</option><option value="motivation">Motivation</option><option value="science">Science</option><option value="mythology">Mythology</option><option value="finance">Finance</option><option value="animals">Animals</option></select></div>
+        <div><label class="text-sm font-semibold text-gray-700 mb-1.5 block">Posting Frequency</label><select id="series-frequency" class="w-full px-4 py-3 rounded-xl glass-input outline-none text-sm cursor-pointer"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="twice_weekly">Twice Weekly</option></select></div>
+        <button type="submit" class="w-full btn-gradient text-white py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 mt-2"><i data-lucide="plus" class="w-4 h-4"></i> Create Series</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+  <div class="glass-dark text-white px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
+    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400" id="toast-icon"></i>
+    <span id="toast-msg" class="text-sm font-medium"></span>
+  </div>
+</div>
+
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════════════════════
-let token = localStorage.getItem('faceless_token') || '';
-let currentUser = null;
-let selectedNiche = 'kids_cartoon';
-let selectedStyle = 'cartoon';
-let currentPage = 'dashboard';
-const API = '';
+var token = localStorage.getItem('faceless_token') || '';
+var currentUser = null;
+var selectedNiche = 'kids_cartoon';
+var selectedStyle = 'cartoon';
+var currentPage = 'dashboard';
+var API = '';
+var activeGenerationVideoId = '';
 
-// ══════════════════════════════════════════════════════════════
-// API HELPERS
-// ══════════════════════════════════════════════════════════════
-async function api(path, opts = {}) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(`${API}${path}`, { ...opts, headers });
+function updateDuration(val) {
+  var v = parseInt(val);
+  document.getElementById('duration-display').textContent = v >= 60 ? Math.floor(v/60) + 'm ' + (v%60 ? v%60 + 's' : '') : v + 's';
+}
+
+async function api(path, opts) {
+  opts = opts || {};
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  var res = await fetch(API + path, Object.assign({}, opts, { headers: headers }));
   if (res.status === 401) { logout(); throw new Error('Unauthorized'); }
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
+    var err = await res.json().catch(function() { return {}; });
     throw new Error(err.detail || 'Request failed');
   }
   return res.json();
 }
 
-function toast(msg, duration = 3000) {
-  const t = document.getElementById('toast');
+function toast(msg, duration) {
+  duration = duration || 3000;
+  var t = document.getElementById('toast');
   document.getElementById('toast-msg').textContent = msg;
   t.classList.remove('hidden');
-  setTimeout(() => t.classList.add('hidden'), duration);
+  setTimeout(function() { t.classList.add('hidden'); }, duration);
 }
 
-// ══════════════════════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════════════════════
 function showAuthTab(tab) {
   document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
   document.getElementById('register-form').classList.toggle('hidden', tab !== 'register');
-  document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
-  document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
-  document.getElementById('tab-login').classList.toggle('text-gray-900', tab === 'login');
-  document.getElementById('tab-login').classList.toggle('text-gray-500', tab !== 'login');
-  document.getElementById('tab-register').classList.toggle('bg-white', tab === 'register');
-  document.getElementById('tab-register').classList.toggle('shadow', tab === 'register');
-  document.getElementById('tab-register').classList.toggle('text-gray-900', tab === 'register');
-  document.getElementById('tab-register').classList.toggle('text-gray-500', tab !== 'register');
+  var loginBtn = document.getElementById('tab-login');
+  var regBtn = document.getElementById('tab-register');
+  if (tab === 'login') {
+    loginBtn.className = 'flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-300 bg-white shadow-sm text-gray-900';
+    regBtn.className = 'flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-300 text-gray-500';
+  } else {
+    regBtn.className = 'flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-300 bg-white shadow-sm text-gray-900';
+    loginBtn.className = 'flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-300 text-gray-500';
+  }
 }
 
 async function handleLogin(e) {
   e.preventDefault();
   try {
-    const data = await api('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: document.getElementById('login-email').value,
-        password: document.getElementById('login-password').value,
-      }),
-    });
-    token = data.token;
-    localStorage.setItem('faceless_token', token);
-    currentUser = data.user;
-    showDashboard();
-  } catch (err) {
-    document.getElementById('auth-error').textContent = err.message;
-    document.getElementById('auth-error').classList.remove('hidden');
-  }
+    var data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: document.getElementById('login-email').value, password: document.getElementById('login-password').value }) });
+    token = data.token; localStorage.setItem('faceless_token', token); currentUser = data.user; showDashboard();
+  } catch (err) { showAuthError(err.message); }
 }
 
 async function handleRegister(e) {
   e.preventDefault();
   try {
-    const data = await api('/api/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: document.getElementById('register-name').value,
-        email: document.getElementById('register-email').value,
-        password: document.getElementById('register-password').value,
-      }),
-    });
-    token = data.token;
-    localStorage.setItem('faceless_token', token);
-    currentUser = data.user;
-    showDashboard();
-    toast('Account created! Welcome! 🎉');
-  } catch (err) {
-    document.getElementById('auth-error').textContent = err.message;
-    document.getElementById('auth-error').classList.remove('hidden');
-  }
+    var data = await api('/api/auth/register', { method: 'POST', body: JSON.stringify({ name: document.getElementById('register-name').value, email: document.getElementById('register-email').value, password: document.getElementById('register-password').value }) });
+    token = data.token; localStorage.setItem('faceless_token', token); currentUser = data.user; showDashboard(); toast('Account created! Welcome!');
+  } catch (err) { showAuthError(err.message); }
+}
+
+function showAuthError(msg) {
+  var el = document.getElementById('auth-error');
+  document.getElementById('auth-error-text').textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(function() { el.classList.add('hidden'); }, 4000);
 }
 
 function logout() {
-  token = '';
-  currentUser = null;
-  localStorage.removeItem('faceless_token');
+  token = ''; currentUser = null; localStorage.removeItem('faceless_token');
   document.getElementById('auth-screen').classList.remove('hidden');
   document.getElementById('dashboard-screen').classList.add('hidden');
+  lucide.createIcons();
 }
 
-// ══════════════════════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════════════════════
 function navigate(page) {
   currentPage = page;
-  document.querySelectorAll('[id^="page-"]').forEach(el => el.classList.add('hidden'));
-  document.getElementById(`page-${page}`)?.classList.remove('hidden');
-  document.querySelectorAll('.sidebar-link').forEach(el => {
-    el.classList.toggle('active', el.dataset.page === page);
-  });
-
-  // Load data for specific pages
+  document.querySelectorAll('[id^="page-"]').forEach(function(el) { el.classList.add('hidden'); });
+  var p = document.getElementById('page-' + page); if (p) p.classList.remove('hidden');
+  document.querySelectorAll('.sidebar-link').forEach(function(el) { el.classList.toggle('active', el.dataset.page === page); });
   if (page === 'dashboard') loadDashboard();
   if (page === 'videos') loadVideos();
   if (page === 'series') loadSeries();
   if (page === 'schedule') loadSchedule();
   if (page === 'analytics') loadAnalytics();
   if (page === 'create') initCreatePage();
+  lucide.createIcons();
 }
 
-// ══════════════════════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════════════════════
 async function showDashboard() {
   document.getElementById('auth-screen').classList.add('hidden');
   document.getElementById('dashboard-screen').classList.remove('hidden');
-
   if (currentUser) {
     document.getElementById('user-name').textContent = currentUser.name || currentUser.email;
     document.getElementById('user-plan').textContent = currentUser.plan.charAt(0).toUpperCase() + currentUser.plan.slice(1) + ' Plan';
     document.getElementById('user-avatar').textContent = (currentUser.name || currentUser.email)[0].toUpperCase();
   }
-
   navigate('dashboard');
 }
 
 async function loadDashboard() {
   try {
-    const stats = await api('/api/analytics/dashboard');
-    document.getElementById('stat-videos').textContent = stats.total_videos.toLocaleString();
-    document.getElementById('stat-views').textContent = stats.total_views.toLocaleString();
-    document.getElementById('stat-likes').textContent = stats.total_likes.toLocaleString();
-    document.getElementById('stat-series').textContent = stats.active_series.toLocaleString();
-
-    const videos = await api('/api/videos');
-    const list = document.getElementById('recent-videos-list');
+    var stats = await api('/api/analytics/dashboard');
+    animateCounter('stat-videos', stats.total_videos);
+    animateCounter('stat-views', stats.total_views);
+    animateCounter('stat-likes', stats.total_likes);
+    animateCounter('stat-series', stats.active_series);
+    var videos = await api('/api/videos');
+    var list = document.getElementById('recent-videos-list');
     if (videos.length === 0) {
-      list.innerHTML = '<div class="text-gray-400 text-center py-8">No videos yet. Create your first video! ✨</div>';
+      list.innerHTML = '<div class="text-gray-400 text-center py-10 flex flex-col items-center gap-3"><i data-lucide="film" class="w-10 h-10 text-gray-300"></i><span>No videos yet. Create your first video!</span></div>';
     } else {
-      list.innerHTML = videos.slice(0, 5).map(v => `
-        <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50">
-          <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">🎬</div>
-          <div class="flex-1">
-            <div class="font-medium text-sm">${escHtml(v.title)}</div>
-            <div class="text-xs text-gray-500">${v.status} · ${new Date(v.created_at).toLocaleDateString()}</div>
-          </div>
-          <span class="text-xs px-2 py-1 rounded-full ${statusColor(v.status)}">${v.status}</span>
-        </div>
-      `).join('');
+      list.innerHTML = videos.slice(0, 5).map(function(v) {
+        return '<div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/50 transition-all cursor-pointer"><div class="w-10 h-10 rounded-xl btn-gradient flex items-center justify-center shadow-sm"><i data-lucide="film" class="w-5 h-5 text-white"></i></div><div class="flex-1 min-w-0"><div class="font-semibold text-sm truncate">' + escHtml(v.title) + '</div><div class="text-xs text-gray-500">' + v.status + ' &middot; ' + new Date(v.created_at).toLocaleDateString() + '</div></div><span class="text-xs px-2.5 py-1 rounded-full font-medium ' + statusColor(v.status) + '">' + v.status + '</span></div>';
+      }).join('');
     }
+    lucide.createIcons();
   } catch (err) { console.error(err); }
 }
 
-// ══════════════════════════════════════════════════════════════
-// CREATE VIDEO
-// ══════════════════════════════════════════════════════════════
-const NICHE_ICONS = {
-  kids_cartoon: '🧸', scary_stories: '👻', history: '📜', motivation: '💪',
-  science: '🔬', mythology: '⚡', finance: '💰', animals: '🦁', custom: '🎨'
-};
+function animateCounter(id, target) {
+  var el = document.getElementById(id);
+  var start = parseInt(el.textContent.replace(/,/g, '')) || 0;
+  var duration = 800;
+  var startTime = performance.now();
+  function update(now) {
+    var progress = Math.min((now - startTime) / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(start + (target - start) * eased).toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+var NICHE_ICONS = { kids_cartoon: 'baby', scary_stories: 'ghost', history: 'scroll-text', motivation: 'trophy', science: 'atom', mythology: 'shield', finance: 'wallet', animals: 'paw-print', custom: 'brush' };
 
 async function initCreatePage() {
   try {
-    const [niches, styles, voices, music] = await Promise.all([
-      api('/api/config/niches'),
-      api('/api/config/art-styles'),
-      api('/api/config/voices'),
-      api('/api/config/music'),
-    ]);
-
-    // Niche grid
-    const nicheGrid = document.getElementById('niche-grid');
-    nicheGrid.innerHTML = niches.map(n => `
-      <div class="niche-card bg-white rounded-xl p-5 shadow-sm cursor-pointer ${selectedNiche === n.id ? 'selected' : ''}"
-           onclick="selectNiche('${n.id}', this)">
-        <div class="text-3xl mb-2">${NICHE_ICONS[n.id] || '📺'}</div>
-        <h3 class="font-semibold">${escHtml(n.name)}</h3>
-        <p class="text-xs text-gray-500 mt-1">${escHtml(n.description)}</p>
-      </div>
-    `).join('');
-
-    // Style grid
-    const STYLE_COLORS = { cartoon: '#FF6B6B', anime: '#FF69B4', watercolor: '#E8D5B7', neon: '#0a0a0a', retro: '#E74C3C', minimalist: '#F8F9FA', pixel: '#306230', storybook: '#FFEAA7' };
-    const styleGrid = document.getElementById('style-grid');
-    styleGrid.innerHTML = styles.map(s => `
-      <div class="style-card bg-white rounded-xl p-5 shadow-sm ${selectedStyle === s.id ? 'selected' : ''}"
-           onclick="selectStyle('${s.id}', this)">
-        <div class="w-full h-16 rounded-lg mb-3" style="background:${STYLE_COLORS[s.id] || '#ccc'}"></div>
-        <h3 class="font-semibold text-sm">${escHtml(s.name)}</h3>
-        <p class="text-xs text-gray-500">${escHtml(s.description)}</p>
-      </div>
-    `).join('');
-
-    // Voices
-    const voiceSelect = document.getElementById('create-voice');
-    voiceSelect.innerHTML = voices.map(v => `<option value="${v.id}">${v.name} (${v.accent}, ${v.gender}) — Best for: ${v.best_for}</option>`).join('');
-
-    // Music
-    const musicSelect = document.getElementById('create-music');
-    musicSelect.innerHTML = music.map(m => `<option value="${m.id}">${m.name} — ${m.mood}</option>`).join('');
-
+    var results = await Promise.all([api('/api/config/niches'), api('/api/config/art-styles'), api('/api/config/voices'), api('/api/config/music')]);
+    var niches = results[0], styles = results[1], voices = results[2], music = results[3];
+    document.getElementById('niche-grid').innerHTML = niches.map(function(n) {
+      return '<div class="niche-card glass-card rounded-2xl p-5 cursor-pointer ' + (selectedNiche === n.id ? 'selected' : '') + '" onclick="selectNiche(\'' + n.id + '\', this)"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center mb-3"><i data-lucide="' + (NICHE_ICONS[n.id] || 'tv') + '" class="w-5 h-5 text-brand-600"></i></div><h3 class="font-bold text-sm">' + escHtml(n.name) + '</h3><p class="text-xs text-gray-500 mt-1">' + escHtml(n.description) + '</p></div>';
+    }).join('');
+    var STYLE_COLORS = { cartoon: 'from-rose-400 to-orange-400', anime: 'from-pink-400 to-rose-400', watercolor: 'from-amber-300 to-yellow-300', neon: 'from-cyan-400 to-blue-500', retro: 'from-red-400 to-rose-500', minimalist: 'from-gray-200 to-gray-300', pixel: 'from-green-400 to-emerald-500', storybook: 'from-yellow-300 to-amber-400' };
+    document.getElementById('style-grid').innerHTML = styles.map(function(s) {
+      return '<div class="style-card glass-card rounded-2xl p-5 ' + (selectedStyle === s.id ? 'selected' : '') + '" onclick="selectStyle(\'' + s.id + '\', this)"><div class="w-full h-14 rounded-xl mb-3 bg-gradient-to-br ' + (STYLE_COLORS[s.id] || 'from-gray-300 to-gray-400') + '"></div><h3 class="font-bold text-sm">' + escHtml(s.name) + '</h3><p class="text-xs text-gray-500 mt-0.5">' + escHtml(s.description) + '</p></div>';
+    }).join('');
+    document.getElementById('create-voice').innerHTML = voices.map(function(v) { return '<option value="' + v.id + '">' + v.name + ' (' + v.accent + ', ' + v.gender + ')</option>'; }).join('');
+    document.getElementById('create-music').innerHTML = music.map(function(m) { return '<option value="' + m.id + '">' + m.name + ' — ' + m.mood + '</option>'; }).join('');
+    lucide.createIcons();
   } catch (err) { console.error(err); }
 }
 
-function selectNiche(id, el) {
-  selectedNiche = id;
-  document.querySelectorAll('.niche-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function selectStyle(id, el) {
-  selectedStyle = id;
-  document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
+function selectNiche(id, el) { selectedNiche = id; document.querySelectorAll('.niche-card').forEach(function(c) { c.classList.remove('selected'); }); el.classList.add('selected'); }
+function selectStyle(id, el) { selectedStyle = id; document.querySelectorAll('.style-card').forEach(function(c) { c.classList.remove('selected'); }); el.classList.add('selected'); }
 
 function createStep(step) {
-  for (let i = 1; i <= 4; i++) {
-    document.getElementById(`create-step-${i}`)?.classList.toggle('hidden', i !== step);
-  }
-  document.querySelectorAll('.step-indicator').forEach(el => {
-    const s = parseInt(el.dataset.step);
-    el.classList.toggle('opacity-40', s > step);
+  for (var i = 1; i <= 4; i++) { var el = document.getElementById('create-step-' + i); if (el) el.classList.toggle('hidden', i !== step); }
+  document.querySelectorAll('.step-indicator').forEach(function(el) {
+    var s = parseInt(el.dataset.step); el.classList.toggle('opacity-40', s > step);
+    var circle = el.querySelector('div');
+    circle.className = s <= step ? 'w-9 h-9 rounded-full btn-gradient text-white flex items-center justify-center text-sm font-bold shadow-md' : 'w-9 h-9 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold';
   });
-
   if (step === 4) startGeneration();
+  lucide.createIcons();
+}
+
+function updateGenerationUI(progress, step, status) {
+  var pct = typeof progress === 'number' ? progress : parseInt(progress || 0, 10) || 0;
+  document.getElementById('gen-progress-bar').style.width = pct + '%';
+  document.getElementById('gen-progress-pct').textContent = pct + '%';
+  if (step) document.getElementById('gen-step-text').textContent = step;
+  if (status === 'ready') {
+    document.getElementById('gen-complete').classList.remove('hidden');
+    lucide.createIcons();
+  }
+}
+
+async function syncGenerationProgress(videoId) {
+  var v = await api('/api/videos/' + videoId);
+  if (videoId !== activeGenerationVideoId) return null;
+  var step = v.status === 'failed' && v.error_message ? v.error_message : v.generation_step;
+  updateGenerationUI(v.generation_progress, step, v.status);
+  return v;
 }
 
 async function startGeneration() {
-  const format = document.querySelector('input[name="create-format"]:checked')?.value || 'short';
-  const duration = parseInt(document.getElementById('create-duration').value) || 60;
-  const topic = document.getElementById('create-topic').value;
-
+  var fmt = document.querySelector('input[name="create-format"]:checked');
+  var format = fmt ? fmt.value : 'short';
+  var duration = parseInt(document.getElementById('create-duration').value) || 60;
+  var topic = document.getElementById('create-topic').value;
+  activeGenerationVideoId = '';
   document.getElementById('gen-complete').classList.add('hidden');
   document.getElementById('gen-progress-bar').style.width = '0%';
   document.getElementById('gen-progress-pct').textContent = '0%';
-
+  document.getElementById('gen-step-text').textContent = 'Starting up the AI pipeline...';
   try {
-    const data = await api('/api/videos/generate', {
-      method: 'POST',
-      body: JSON.stringify({
-        niche: selectedNiche,
-        art_style: selectedStyle,
-        video_format: format,
-        duration_target: duration,
-        topic: topic,
-      }),
-    });
-
-    // Connect WebSocket for progress
-    const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${wsProtocol}//${location.host}/ws/progress/${data.video_id}`);
-
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      document.getElementById('gen-progress-bar').style.width = msg.progress + '%';
-      document.getElementById('gen-progress-pct').textContent = msg.progress + '%';
-      document.getElementById('gen-step-text').textContent = msg.step;
-
-      if (msg.status === 'ready') {
-        document.getElementById('gen-complete').classList.remove('hidden');
-        ws.close();
-      }
-      if (msg.status === 'failed') {
-        document.getElementById('gen-step-text').textContent = '❌ ' + msg.step;
-        ws.close();
-      }
+    var data = await api('/api/videos/generate', { method: 'POST', body: JSON.stringify({ niche: selectedNiche, art_style: selectedStyle, video_format: format, duration_target: duration, topic: topic }) });
+    activeGenerationVideoId = data.video_id;
+    var wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var ws = new WebSocket(wsProto + '//' + location.host + '/ws/progress/' + data.video_id);
+    ws.onmessage = function(event) {
+      if (data.video_id !== activeGenerationVideoId) return;
+      var msg = JSON.parse(event.data);
+      updateGenerationUI(msg.progress, msg.step, msg.status);
+      if (msg.status === 'failed') { document.getElementById('gen-step-text').textContent = msg.step; ws.close(); }
+      if (msg.status === 'ready') { ws.close(); }
     };
-
-    // Poll fallback
+    ws.onerror = function() {
+      if (data.video_id === activeGenerationVideoId) document.getElementById('gen-step-text').textContent = 'Live updates disconnected. Checking progress...';
+    };
+    syncGenerationProgress(data.video_id).catch(function() {});
     pollProgress(data.video_id);
-
-  } catch (err) {
-    document.getElementById('gen-step-text').textContent = '❌ ' + err.message;
-  }
+  } catch (err) { document.getElementById('gen-step-text').textContent = err.message; }
 }
 
 async function pollProgress(videoId) {
-  for (let i = 0; i < 120; i++) {
-    await new Promise(r => setTimeout(r, 3000));
+  var failedAttempts = 0;
+  for (var i = 0; i < 120; i++) {
+    if (videoId !== activeGenerationVideoId) return;
+    await new Promise(function(r) { setTimeout(r, 3000); });
     try {
-      const v = await api(`/api/videos/${videoId}`);
-      document.getElementById('gen-progress-bar').style.width = v.generation_progress + '%';
-      document.getElementById('gen-progress-pct').textContent = v.generation_progress + '%';
-      document.getElementById('gen-step-text').textContent = v.generation_step;
-
-      if (v.status === 'ready') {
-        document.getElementById('gen-complete').classList.remove('hidden');
-        return;
+      var v = await syncGenerationProgress(videoId);
+      failedAttempts = 0;
+      if (!v) return;
+      if (v.status === 'ready' || v.status === 'failed') return;
+    } catch(e) {
+      failedAttempts += 1;
+      if (failedAttempts >= 3 && videoId === activeGenerationVideoId) {
+        document.getElementById('gen-step-text').textContent = 'Trouble refreshing progress. Retrying...';
       }
-      if (v.status === 'failed') {
-        document.getElementById('gen-step-text').textContent = '❌ ' + v.error_message;
-        return;
-      }
-    } catch { break; }
+    }
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-// VIDEOS
-// ══════════════════════════════════════════════════════════════
 async function loadVideos() {
   try {
-    const videos = await api('/api/videos');
-    const list = document.getElementById('videos-list');
-    if (videos.length === 0) {
-      list.innerHTML = '<div class="text-gray-400 text-center py-12 col-span-full">No videos yet.</div>';
-      return;
-    }
-    list.innerHTML = videos.map(v => `
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
-        <div class="h-40 gradient-bg flex items-center justify-center text-4xl relative">
-          🎬
-          <span class="absolute top-3 right-3 text-xs px-2 py-1 rounded-full ${statusColor(v.status)} font-medium">${v.status}</span>
-        </div>
-        <div class="p-4">
-          <h3 class="font-semibold text-sm mb-1 truncate">${escHtml(v.title)}</h3>
-          <div class="text-xs text-gray-500 mb-3">${v.niche} · ${v.art_style} · ${new Date(v.created_at).toLocaleDateString()}</div>
-          <div class="flex gap-2">
-            ${v.status === 'ready' ? `<a href="/api/videos/${v.id}/download" class="flex-1 text-center text-xs py-1.5 rounded-lg bg-indigo-50 text-indigo-600 font-medium hover:bg-indigo-100">Download</a>` : ''}
-            ${v.status === 'generating' ? `<div class="flex-1 text-center text-xs py-1.5">${v.generation_progress}%</div>` : ''}
-            <button onclick="deleteVideo('${v.id}')" class="text-xs py-1.5 px-3 rounded-lg text-red-500 hover:bg-red-50">Delete</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
+    var videos = await api('/api/videos');
+    var list = document.getElementById('videos-list');
+    if (videos.length === 0) { list.innerHTML = '<div class="text-gray-400 text-center py-14 col-span-full flex flex-col items-center gap-3"><i data-lucide="film" class="w-10 h-10 text-gray-300"></i><span>No videos yet.</span></div>'; lucide.createIcons(); return; }
+    list.innerHTML = videos.map(function(v) {
+      var dl = v.status === 'ready' ? '<a href="/api/videos/' + v.id + '/download" class="flex-1 text-center text-xs py-2 rounded-xl bg-brand-50 text-brand-600 font-semibold hover:bg-brand-100 transition flex items-center justify-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5"></i> Download</a>' : '';
+      var prog = v.status === 'generating' ? '<div class="flex-1 text-center text-xs py-2 text-brand-600 font-semibold">' + v.generation_progress + '%</div>' : '';
+      return '<div class="glass-card rounded-2xl overflow-hidden"><div class="h-40 bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center relative"><i data-lucide="film" class="w-12 h-12 text-white/50"></i><span class="absolute top-3 right-3 text-xs px-2.5 py-1 rounded-full ' + statusColor(v.status) + ' font-semibold">' + v.status + '</span></div><div class="p-5"><h3 class="font-bold text-sm mb-1 truncate">' + escHtml(v.title) + '</h3><div class="text-xs text-gray-500 mb-4">' + v.niche + ' &middot; ' + v.art_style + ' &middot; ' + new Date(v.created_at).toLocaleDateString() + '</div><div class="flex gap-2">' + dl + prog + '<button onclick="deleteVideo(\'' + v.id + '\')" class="text-xs py-2 px-3 rounded-xl text-red-500 hover:bg-red-50 transition flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete</button></div></div></div>';
+    }).join('');
+    lucide.createIcons();
   } catch (err) { console.error(err); }
 }
 
-async function deleteVideo(id) {
-  if (!confirm('Delete this video?')) return;
-  await api(`/api/videos/${id}`, { method: 'DELETE' });
-  toast('Video deleted');
-  loadVideos();
-}
+async function deleteVideo(id) { if (!confirm('Delete this video?')) return; await api('/api/videos/' + id, { method: 'DELETE' }); toast('Video deleted'); loadVideos(); }
 
-// ══════════════════════════════════════════════════════════════
-// SERIES
-// ══════════════════════════════════════════════════════════════
 async function loadSeries() {
   try {
-    const seriesList = await api('/api/series');
-    const list = document.getElementById('series-list');
-    if (seriesList.length === 0) {
-      list.innerHTML = '<div class="text-gray-400 text-center py-12 col-span-full">No series yet. Create your first series!</div>';
-      return;
-    }
-    list.innerHTML = seriesList.map(s => `
-      <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold">${escHtml(s.name)}</h3>
-          <span class="text-xs px-2 py-1 rounded-full ${s.is_active ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}">${s.is_active ? 'Active' : 'Paused'}</span>
-        </div>
-        <div class="text-xs text-gray-500 space-y-1">
-          <div>📺 ${s.niche} · 🎨 ${s.art_style}</div>
-          <div>📅 ${s.posting_frequency} at ${s.posting_time}</div>
-          <div>📱 ${(s.posting_platforms || []).join(', ')}</div>
-          <div>🎬 ${s.video_count} videos</div>
-        </div>
-        <div class="mt-4 flex gap-2">
-          <button onclick="deleteSeries('${s.id}')" class="text-xs py-1.5 px-3 rounded-lg text-red-500 hover:bg-red-50">Delete</button>
-        </div>
-      </div>
-    `).join('');
+    var sl = await api('/api/series'); var list = document.getElementById('series-list');
+    if (sl.length === 0) { list.innerHTML = '<div class="text-gray-400 text-center py-14 col-span-full flex flex-col items-center gap-3"><i data-lucide="folder-open" class="w-10 h-10 text-gray-300"></i><span>No series yet. Create your first series!</span></div>'; lucide.createIcons(); return; }
+    list.innerHTML = sl.map(function(s) {
+      var sc = s.is_active ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-gray-100 text-gray-500';
+      var dc = s.is_active ? 'bg-emerald-500' : 'bg-gray-400';
+      return '<div class="glass-card rounded-2xl p-6"><div class="flex items-center justify-between mb-4"><h3 class="font-bold truncate">' + escHtml(s.name) + '</h3><span class="text-xs px-2.5 py-1 rounded-full font-semibold flex items-center gap-1 ' + sc + '"><span class="w-1.5 h-1.5 rounded-full ' + dc + '"></span> ' + (s.is_active ? 'Active' : 'Paused') + '</span></div><div class="text-xs text-gray-500 space-y-2"><div class="flex items-center gap-2"><i data-lucide="tv" class="w-3.5 h-3.5"></i> ' + s.niche + ' &middot; ' + s.art_style + '</div><div class="flex items-center gap-2"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ' + s.posting_frequency + ' at ' + s.posting_time + '</div><div class="flex items-center gap-2"><i data-lucide="share-2" class="w-3.5 h-3.5"></i> ' + (s.posting_platforms || []).join(', ') + '</div><div class="flex items-center gap-2"><i data-lucide="film" class="w-3.5 h-3.5"></i> ' + s.video_count + ' videos</div></div><div class="mt-5"><button onclick="deleteSeries(\'' + s.id + '\')" class="text-xs py-2 px-3 rounded-xl text-red-500 hover:bg-red-50 transition flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete</button></div></div>';
+    }).join('');
+    lucide.createIcons();
   } catch (err) { console.error(err); }
 }
 
-async function showCreateSeriesModal() {
-  const name = prompt('Series name:');
-  if (!name) return;
-  const niche = prompt('Niche (kids_cartoon, scary_stories, history, motivation, science, mythology, finance, animals):', 'kids_cartoon');
-  try {
-    await api('/api/series', {
-      method: 'POST',
-      body: JSON.stringify({ name, niche: niche || 'kids_cartoon', posting_platforms: ['youtube'] }),
-    });
-    toast('Series created! 📁');
-    loadSeries();
-  } catch (err) { toast('Error: ' + err.message); }
+function showCreateSeriesModal() { document.getElementById('series-modal').classList.remove('hidden'); lucide.createIcons(); }
+function closeSeriesModal() { document.getElementById('series-modal').classList.add('hidden'); }
+
+async function handleCreateSeries(e) {
+  e.preventDefault();
+  try { await api('/api/series', { method: 'POST', body: JSON.stringify({ name: document.getElementById('series-name').value, niche: document.getElementById('series-niche').value, posting_frequency: document.getElementById('series-frequency').value, posting_platforms: ['youtube'] }) }); closeSeriesModal(); toast('Series created!'); loadSeries(); } catch (err) { toast('Error: ' + err.message); }
 }
 
-async function deleteSeries(id) {
-  if (!confirm('Delete this series and all its videos?')) return;
-  await api(`/api/series/${id}`, { method: 'DELETE' });
-  toast('Series deleted');
-  loadSeries();
-}
+async function deleteSeries(id) { if (!confirm('Delete this series?')) return; await api('/api/series/' + id, { method: 'DELETE' }); toast('Series deleted'); loadSeries(); }
 
-// ══════════════════════════════════════════════════════════════
-// SCHEDULE, PLATFORMS, TRENDING, ANALYTICS
-// ══════════════════════════════════════════════════════════════
 async function loadSchedule() {
   try {
-    const jobs = await api('/api/schedule');
-    const list = document.getElementById('schedule-list');
-    if (jobs.length === 0) {
-      list.innerHTML = '<div class="text-gray-400 text-center py-12">No scheduled posts yet.</div>';
-      return;
-    }
-    list.innerHTML = jobs.map(j => `
-      <div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4">
-        <div class="text-2xl">📅</div>
-        <div class="flex-1">
-          <div class="font-medium text-sm">${new Date(j.scheduled_time).toLocaleString()}</div>
-          <div class="text-xs text-gray-500">${(j.platforms || []).join(', ')} · ${j.status}</div>
-        </div>
-      </div>
-    `).join('');
+    var jobs = await api('/api/schedule'); var list = document.getElementById('schedule-list');
+    if (jobs.length === 0) { list.innerHTML = '<div class="text-gray-400 text-center py-14 flex flex-col items-center gap-3"><i data-lucide="calendar-x" class="w-10 h-10 text-gray-300"></i><span>No scheduled posts yet.</span></div>'; lucide.createIcons(); return; }
+    list.innerHTML = jobs.map(function(j) { return '<div class="glass-card rounded-2xl p-4 flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center shadow-sm"><i data-lucide="calendar-clock" class="w-5 h-5 text-white"></i></div><div class="flex-1"><div class="font-semibold text-sm">' + new Date(j.scheduled_time).toLocaleString() + '</div><div class="text-xs text-gray-500">' + (j.platforms || []).join(', ') + ' &middot; ' + j.status + '</div></div></div>'; }).join('');
+    lucide.createIcons();
   } catch (err) { console.error(err); }
 }
 
-async function connectPlatform(type) {
-  toast('Platform connection flow coming soon! For now, configure in .env');
-}
+async function connectPlatform(type) { toast('Platform connection coming soon!'); }
 
 async function loadTrending() {
-  document.getElementById('trending-content').innerHTML = '<div class="text-center py-8"><div class="text-4xl mb-4 pulse-dot">🔍</div>Searching for trending content...</div>';
+  document.getElementById('trending-content').innerHTML = '<div class="text-center py-10 flex flex-col items-center gap-3"><div class="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center animate-pulse"><i data-lucide="search" class="w-6 h-6 text-brand-500"></i></div><span class="text-gray-500 text-sm">Searching for trending content...</span></div>';
+  lucide.createIcons();
   try {
-    const data = await api('/api/analytics/trending');
-    const analysis = data.ai_analysis || {};
-    let html = '';
-
+    var data = await api('/api/analytics/trending'); var analysis = data.ai_analysis || {}; var html = '';
     if (analysis.trending_themes) {
-      html += '<div class="bg-white rounded-xl p-6 shadow-sm"><h3 class="font-semibold mb-3">📈 Trending Themes</h3><div class="flex flex-wrap gap-2">';
-      analysis.trending_themes.forEach(t => { html += `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm">${escHtml(t)}</span>`; });
+      html += '<div class="glass-card rounded-2xl p-6"><h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="trending-up" class="w-5 h-5 text-brand-500"></i> Trending Themes</h3><div class="flex flex-wrap gap-2">';
+      analysis.trending_themes.forEach(function(t) { html += '<span class="bg-brand-50 text-brand-700 px-3.5 py-1.5 rounded-full text-sm font-medium border border-brand-100">' + escHtml(t) + '</span>'; });
       html += '</div></div>';
     }
-
     if (analysis.video_ideas) {
-      html += '<div class="bg-white rounded-xl p-6 shadow-sm"><h3 class="font-semibold mb-3">💡 Video Ideas</h3><div class="space-y-3">';
-      analysis.video_ideas.forEach(v => {
-        const icon = v.priority === 'high' ? '🔴' : v.priority === 'medium' ? '🟡' : '🟢';
-        html += `<div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50">
-          <span>${icon}</span>
-          <div>
-            <div class="font-medium text-sm">${escHtml(v.title)}</div>
-            <div class="text-xs text-gray-500">${escHtml(v.description || '')}</div>
-          </div>
-          <button onclick="document.getElementById('create-topic').value='${escHtml(v.title)}'; navigate('create')" class="ml-auto text-xs text-indigo-600 hover:underline whitespace-nowrap">Use this →</button>
-        </div>`;
+      html += '<div class="glass-card rounded-2xl p-6"><h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="lightbulb" class="w-5 h-5 text-amber-500"></i> Video Ideas</h3><div class="space-y-2">';
+      analysis.video_ideas.forEach(function(v) {
+        var pc = { high: 'text-red-500', medium: 'text-amber-500', low: 'text-emerald-500' };
+        html += '<div class="flex items-start gap-3 p-3 rounded-xl hover:bg-white/50 transition"><div class="flex-1"><div class="font-semibold text-sm">' + escHtml(v.title) + '</div><div class="text-xs text-gray-500">' + escHtml(v.description || '') + '</div></div></div>';
       });
       html += '</div></div>';
     }
-
     if (analysis.keywords) {
-      html += '<div class="bg-white rounded-xl p-6 shadow-sm"><h3 class="font-semibold mb-3">🏷️ Top Keywords</h3><div class="flex flex-wrap gap-2">';
-      analysis.keywords.forEach(k => { html += `<span class="bg-gray-100 px-3 py-1 rounded-full text-sm">${escHtml(k)}</span>`; });
+      html += '<div class="glass-card rounded-2xl p-6"><h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="hash" class="w-5 h-5 text-brand-500"></i> Top Keywords</h3><div class="flex flex-wrap gap-2">';
+      analysis.keywords.forEach(function(k) { html += '<span class="bg-gray-100 px-3.5 py-1.5 rounded-full text-sm font-medium">' + escHtml(k) + '</span>'; });
       html += '</div></div>';
     }
-
-    document.getElementById('trending-content').innerHTML = html || '<div class="text-gray-400 text-center py-8">No trending data available.</div>';
+    document.getElementById('trending-content').innerHTML = html || '<div class="text-gray-400 text-center py-10">No trending data available.</div>';
+    lucide.createIcons();
   } catch (err) {
-    document.getElementById('trending-content').innerHTML = `<div class="text-red-500 text-center py-8">Error: ${err.message}</div>`;
+    document.getElementById('trending-content').innerHTML = '<div class="text-red-500 text-center py-10">Error: ' + err.message + '</div>';
   }
 }
 
 async function loadAnalytics() {
   try {
-    const stats = await api('/api/analytics/dashboard');
+    var stats = await api('/api/analytics/dashboard');
     document.getElementById('analytics-total-videos').textContent = stats.total_videos;
     document.getElementById('analytics-posted').textContent = stats.posted_videos;
     document.getElementById('analytics-views').textContent = stats.total_views.toLocaleString();
@@ -973,43 +910,18 @@ async function loadAnalytics() {
   } catch (err) { console.error(err); }
 }
 
-// ══════════════════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════════════════
-function escHtml(str) {
-  const d = document.createElement('div');
-  d.textContent = str || '';
-  return d.innerHTML;
-}
+function escHtml(str) { var d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
 
 function statusColor(status) {
-  const map = {
-    ready: 'bg-green-50 text-green-600',
-    posted: 'bg-blue-50 text-blue-600',
-    generating: 'bg-yellow-50 text-yellow-600',
-    failed: 'bg-red-50 text-red-600',
-    draft: 'bg-gray-100 text-gray-500',
-    scheduled: 'bg-purple-50 text-purple-600',
-  };
+  var map = { ready: 'bg-emerald-50 text-emerald-600 border border-emerald-100', posted: 'bg-blue-50 text-blue-600 border border-blue-100', generating: 'bg-amber-50 text-amber-600 border border-amber-100', failed: 'bg-red-50 text-red-600 border border-red-100', draft: 'bg-gray-100 text-gray-500', scheduled: 'bg-violet-50 text-violet-600 border border-violet-100' };
   return map[status] || 'bg-gray-100 text-gray-500';
 }
 
-// ══════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════
 async function init() {
-  if (token) {
-    try {
-      currentUser = await api('/api/auth/me');
-      showDashboard();
-    } catch {
-      logout();
-    }
-  }
+  if (token) { try { currentUser = await api('/api/auth/me'); showDashboard(); } catch(e) { logout(); } }
+  lucide.createIcons();
 }
-
 init();
 </script>
-
 </body>
 </html>
