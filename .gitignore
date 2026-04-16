@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+output/
+*.mp4
+*.mp3
+*.wav
+token.json
+client_secret*.json
+.venv/
+venv/
+faceless.db
+*.db-journal

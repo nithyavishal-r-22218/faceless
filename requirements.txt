@@ -1,0 +1,34 @@
+google-generativeai>=0.8.0
+google-api-python-client>=2.100.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
+moviepy>=1.0.3
+edge-tts>=6.1.9
+Pillow>=10.0.0
+pydub>=0.25.1
+schedule>=1.2.0
+python-dotenv>=1.0.0
+aiohttp>=3.9.0
+aiofiles>=23.2.0
+requests>=2.31.0
+pyyaml>=6.0.1
+jinja2>=3.1.2
+rich>=13.7.0
+click>=8.1.7
+pandas>=2.1.0
+matplotlib>=3.8.0
+# Web Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+websockets>=12.0
+# Database
+sqlalchemy>=2.0.0
+aiosqlite>=0.20.0
+# Auth
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.0.0
+# Background Tasks
+apscheduler>=3.10.0
+# Multi-platform
+httpx>=0.27.0
